@@ -1,22 +1,39 @@
-# Index
-
-- [Notes by Joe Penna](#notes-by-joe-penna)
-- [Setup](#setup)
-  - [Easy RunPod Instructions](#easy-runpod-instructions)
-  - [Vast.AI Setup](#vast-ai-setup)
+# Sommaire
+- [Avant-propos](#avant-propos)
+- [Notes de Joe Penna](#notes-by-joe-penna)
+- [Installation](#setup)
+  - [Instructions d'utilisation avec runpod](#easy-runpod-instructions)
+  - [Installation avec Vast.AI](#vast-ai-setup)
 - [Textual Inversion vs. Dreambooth](#text-vs-dreamb)
-- [Using the Generated Model](#using-the-generated-model)
-- [Debugging Your Results](#debugging-your-results)
-  - [They don't look like you at all!](#they-dont-look-like-you)
-  - [They sorta look like you, but exactly like your training images](#they-sorta-look-like-you-but-exactly-like-your-training-images)
-  - [They look like you, but not when you try different styles](#they-look-like-you-but-not-when-you-try-different-styles)
+- [Utiliser le modèle généré](#using-the-generated-model)
+- [Debugger vos résultats](#debugging-your-results)
+  - [Ils ne vous ressemblent pas du tout!](#they-dont-look-like-you)
+  - [Ils vous ressemblent un peu, mais exactement comme vos images d'entrainement](#they-sorta-look-like-you-but-exactly-like-your-training-images)
+  - [Ils vous ressemblent, mais pas quand vous essayez avec d'autres styles](#they-look-like-you-but-not-when-you-try-different-styles)
 - [Hugging Face Diffusers](#hugging-face-diffusers)
 
-# The Repo Formerly Known As "Dreambooth"
-## ...now more accurately described as "Unfrozen Model Textual Inversion for Stable Diffusion"
+# Le Repo anciennement connu sous le nom de "Dreambooth"
+## ...maintenant plus précisément décrit ainsi: "Unfrozen Model Textual Inversion for Stable Diffusion"
 ![image](https://user-images.githubusercontent.com/100188076/192390551-cb89364f-af57-4aed-8f3d-f9eb9b61cf95.png)
 
-## <a name="notes-by-joe-penna"></a>  Notes by Joe Penna
+## <a name="avant-propos"></a>  Avant-propos de Léo
+
+Salut, c'est Léo ([@Desp_OnChain](https://twitter.com/Desp_OnChain) sur Twitter), merci de t'intéresser à ce que je fais.
+
+Ce repo est tiré du repo de JoePenna: https://github.com/JoePenna/Dreambooth-Stable-Diffusion
+qui lui-même est tiré du repo de XavierXao: https://github.com/XavierXiao/Dreambooth-Stable-Diffusion
+
+Mes objectifs ici sont les suivant:
+- Traduire les instructions en français afin de rendre le modèle accessible aux non-anglophones.
+- Simplifier le notebook pour le rendre plus intuitif et enlever les parties non indispensables.
+
+Pour consulter le code original dans son intégralité,
+
+Je précise que pour ne pas dénaturer son propos, et puisque c'est un message personnel de JoePenna qui n'a pas véritablement d'intérêt pour l'utilisation du modèle, j'ai préféré laisser son introduction telle quelle.
+
+Si tu apprécies cette contribution ou que tu veux en savoir plus sur DreamBooth, n'hésite pas à me suivre sur Twitter ou à mettre une étoile à ce repo.
+
+## <a name="notes-by-joe-penna"></a>  Notes de Joe Penna
 ### **INTRODUCTIONS!**
 Hi! My name is Joe Penna.
 
@@ -34,32 +51,31 @@ This is no longer my repo. This is the people-who-wanna-see-Dreambooth-on-SD-wor
 
 Now, if you wanna try to do this... please read the warnings below first:
 
-### **WARNING!**
-- **This is bleeding edge stuff**... there is currently no easy way to run this. This repo is based on a repo based on another repo.
-  - At the moment, it takes a LOT of effort to create something that's basically duct tape and bubble gum -- but eventually works SUPER well.
-  - Step in, please! Don't let that scare ya -- but please know that you're wading through the jungle at night, with no torch...
+### **ATTENTION!**
+- **C'est une technologie à la pointe**... il n'y a pour le moment pas de manière simple de la faire tourner. Ce repo est tiré d'un repo tiré d'un autre repo.
+  - Pour le moment, cela demande beaucoup d'efforts de créer quelque chose qui globalement se rapproche plutôt du rafistolage -- mais qui finit par marcher SUPER bien.
+  - Entrez, s'il vous plaît! Ne vous laissez pas intimider -- mais sachez que vous pataugez de nuit à travers la jungle, sans torche...
 
-- Unfreezing the model takes a lot of juice.
-  - ~~You're gonna need an A6000 / A40 / A100 (or similar top-of-the-line thousands-of-dollars GPU).~~
-  - You can now run this on a GPU with 24GB of VRAM (e.g. 3090). Training will be slower, and you'll need to be sure this is the *only* program running.
-  - If, like myself, you don't happen to own one of those, I'm including a Jupyter notebook here to help you run it on a rented cloud computing platform. 
-  - It's currently tailored to [runpod.io](https://runpod.io?ref=n8yfwyum), but can work on [vast.ai](#vast-ai-setup) / etc.
+- Décongeler le modèle demande beaucoup de puissance.
+  - Il est désormais possible de faire tourner cela sur un GPU avec 24GB de VRAM (e.g. 3090). L'entrainement sera plus lent, et il faudra vous assurer que ce soit le *seul* programme qui tourne.
+  - Si, comme moi, vous n'en possédez pas, Joe Penna a inclus un Jupyter notebook pour vous aider à le faire tourner sur une plateforme de cloud computing. 
+  - C'est actuellement adapté pour [runpod.io](https://runpod.io?ref=n8yfwyum), mais cela fonctionne également sur [vast.ai](#vast-ai-setup) / etc.
   
-- This implementation does not fully implement Google's ideas on how to preserve the latent space.
+- Cette implémentation n'implémente pas complètement l'idée de Google sur la façon de préserver l'espace latent.
 
-  - Most images that are similar to what you're training will be shifted towards that.
-  - e.g. If you're training a person, all people will look like you. If you're training an object, anything in that class will look like your object.
+  - La plupart des images similaires à celles que vous utilisez pour l'entrainement seront biaisées par ce dernier.
+  - Par exemple, si vous réalisez l'entrainement en utilisant des images d'une personne, toutes les personnes ressembleront à cette dernière. Si vous entrainez avec un objet, tous les objets de ce type ressembleront au votre.
 
-- There doesn't seem to be an easy way to train two subjects consecutively. You will end up with an `11-12GB` file before pruning.
-  - The provided notebook has a pruner that crunches it down to `~2gb`
+- Il apparaît qu'il n'y ait pas de manière simple d'entrainer deux sujets consécutifs. Vous obtiendrez un fichier de `11-12GB` avant l'étape de pruning.
+  - Le notebook fourni a un pruner qui le réduit à environ `~2gb`.
   
-- Best practice is to change the token to a celebrity name. Here's [my wife trained with the exact same settings, except for the token](#using-the-generated-model)
+- Le mieux est de changer le nom du token par celui d'une célébrité. Voici [la femme de Joe Penna, en utilisant les même paramètres mais pas le même token](#using-the-generated-model)
 
 
-# <a name="setup"></a> Setup
-## <a name="easy-runpod-instructions"></a> Easy RunPod Instructions
-- Sign up for RunPod. Feel free to use my [referral link here](https://runpod.io?ref=n8yfwyum), so that I don't have to pay for it (but you do).
-- Click **Deploy** on either `SECURE CLOUD` or `COMMUNITY CLOUD`
+# <a name="setup"></a> Installation
+## <a name="easy-runpod-instructions"></a> Instructions d'utilisation avec RunPod
+- Inscrivez-vous sur RunPod. N'hésitez pas à utiliser [mon lien](https://runpod.io?ref=9zat4jx4) ou [celui de Joe Penna](https://runpod.io?ref=n8yfwyum).
+- Cliquez sur **Deploy** dans la catégorie `SECURE CLOUD` ou `COMMUNITY CLOUD` sur la gauche de l'interface.
 - Follow these video instructions here:
 
 [![VIDEO INSTRUCTIONS](https://img.youtube.com/vi/7m__xadX0z0/0.jpg)](https://www.youtube.com/watch?v=7m__xadX0z0#t=5m33.1s)
