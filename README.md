@@ -76,9 +76,7 @@ Now, if you wanna try to do this... please read the warnings below first:
 ## <a name="easy-runpod-instructions"></a> Instructions d'utilisation avec RunPod
 - Inscrivez-vous sur RunPod. N'hésitez pas à utiliser [mon lien](https://runpod.io?ref=9zat4jx4) ou [celui de Joe Penna](https://runpod.io?ref=n8yfwyum).
 - Cliquez sur **Deploy** dans la catégorie `SECURE CLOUD` ou `COMMUNITY CLOUD` sur la gauche de l'interface.
-- Suivez les instructions énoncées dans ce thread:
-
-// FIXME: Ajouter le lien du thread.
+- Suivez les instructions énoncées dans ce [thread](https://twitter.com/Desp_OnChain/status/1577609784441933824?s=20&t=KLrYD4GGif2evwKaJYpeLg)
 
 ## <a name="vast-ai-setup"></a>  Instructions pour Vast.AI
 - Inscrivez-vous sur [Vast.AI](https://vast.ai/)
